@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>カート</title>
+	<style>
+		body {
+			font-family: 'Arial', sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			color: #333;
+		}
+
+		.header {
+			background-color: #6a002c;
+			color: white;
+			padding: 15px 20px;
+			text-align: center;
+		}
+
+		.header h1 {
+			margin: 0;
+		}
+
+		.nav {
+			background-color: #500021;
+			padding: 10px 0;
+			text-align: center;
+		}
+
+		.nav a {
+			color: white;
+			text-decoration: none;
+			padding: 0 15px;
+		}
+
+		.nav a:hover {
+			text-decoration: underline;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 20px auto;
+			padding: 20px;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		h2 {
+			color: #6a002c;
+			border-bottom: 2px solid #6a002c;
+			padding-bottom: 5px;
+			margin-bottom: 20px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 10px;
+			text-align: left;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		.total-amount {
+			text-align: right;
+			font-size: 1.2em;
+			font-weight: bold;
+			margin-top: 20px;
+		}
+
+		.customer-info-form label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+
+		.customer-info-form input[type="text"],
+		.customer-info-form input[type="email"] {
+			width: calc(100% - 22px);
+			padding: 10px;
+			margin-bottom: 15px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+		}
+
+		.place-order-button {
+			background-color: #28a745;
+			color: white;
+			border: none;
+			padding: 12px 20px;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 1.1em;
+			display: block;
+			width: 100%;
+			text-align: center;
+			margin-top: 20px;
+		}
+
+		.place-order-button:hover {
+			background-color: #218838;
+		}
+
+		.empty-cart-message {
+			text-align: center;
+			padding: 50px 0;
+			color: #666;
+		}
+
+		.action-links a {
+			margin-right: 10px;
+			text-decoration: none;
+			color: #007bff;
+		}
+
+		.action-links a:hover {
+			text-decoration: underline;
+		}
+
+		remove-button {
+			background-color: #dc3545;
+			color: white;
+			border: none;
+			padding: 5px 10px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 0.9em;
+		}
+
+		.remove-button:hover {
+			background-color: #c82333;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<h1>My Café Online</h1>
+	</div>
+	<div class="nav"> <a th:href="@{/}">トップ</a> <a th:href="@{/cart}">カート (<span
+				th:text="${cartItems.size()}">0</span>)</a> <a th:href="@{/admin/products}">管理者向け (商品)</a> <a
+			th:href="@{/admin/orders}">管理者向け (注文)</a> </div>
+	<div class="container">
+		<h2>カート内容</h2>
+		<p th:if="${message}" class="message" th:text="${message}"></p>
+		<p th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></p>
+		<div th:if="${cartItems.isEmpty()}" class="empty-cart-message">
+			<p>カートに商品がありません。</p>
+			<a th:href="@{/}">商品を選びに戻る</a>
+		</div>
+		<div th:unless="${cartItems.isEmpty()}">
+			<table>
+				<thead>
+					<tr>
+						<th>商品名</th>
+						<th>単価</th>
+						<th>数量</th>
+						<th>小計</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${cartItems}">
+						<td th:text="${item.product.name}"></td>
+						<td th:text="${#numbers.formatCurrency(item.product.price)} + '円'"></td>
+						<td th:text="${item.quantity}"></td>
+						<td th:text="${#numbers.formatCurrency(item.product.price * item.quantity)} + '円'"></td>
+						<td>
+							<form th:action="@{/cart/remove}" method="post" style="display:inline;">
+								<input type="hidden" name="productId" th:value="${item.product.id}" />
+								<button type="submit" class="remove-button">削除</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="total-amount">
+				合計金額: <span th:text="${#numbers.formatCurrency(totalAmount)} + '円'"></span>
+			</div>
+			<h3>お客様情報</h3>
+			<form th:action="@{/place-order}" th:object="${customer}" method="post" class="customer-info-form">
+				<p>
+					<label for="name">お名前:</label>
+					<input type="text" id="name" th:field="*{name}" required>
+				</p>
+				<p>
+					<label for="email">E メール:</label>
+					<input type="email" id="email" th:field="*{email}" required>
+				</p>
+				<button type="submit" class="place-order-button">注文を確定する</button>
+			</form>
+		</div>
+	</div>
+
+</body>
+
+</html>

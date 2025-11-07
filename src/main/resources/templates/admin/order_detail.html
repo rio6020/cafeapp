@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>管理者: 注文詳細</title>
+	<style>
+		body {
+			font-family: 'Arial', sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			color: #333;
+		}
+
+		.header {
+			background-color: #6a002c;
+			color: white;
+			padding: 15px 20px;
+			text-align: center;
+		}
+
+		.header h1 {
+			margin: 0;
+		}
+
+		.nav {
+			background-color: #500021;
+			padding: 10px 0;
+			text-align: center;
+		}
+
+		.nav a {
+			color: white;
+			text-decoration: none;
+			padding: 0 15px;
+		}
+
+		.nav a:hover {
+			text-decoration: underline;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 20px auto;
+			padding: 20px;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		h2 {
+			color: #6a002c;
+			border-bottom: 2px solid #6a002c;
+			padding-bottom: 5px;
+			margin-bottom: 20px;
+		}
+
+		p {
+			margin-bottom: 10px;
+		}
+
+		.label {
+			font-weight: bold;
+			margin-right: 5px;
+			color: #555;
+		}
+
+		.item-table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		.item-table th,
+		.item-table td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			text-align: left;
+		}
+
+		.item-table th {
+			background-color: #f2f2f2;
+		}
+
+		.total-info {
+			text-align: right;
+			font-size: 1.2em;
+			font-weight: bold;
+			margin-top: 20px;
+		}
+
+		.status-update-form {
+			margin-top: 20px;
+			padding-top: 15px;
+			border-top: 1px solid #eee;
+		}
+
+		.status-update-form label {
+			font-weight: bold;
+			margin-right: 10px;
+		}
+
+		.status-update-form select {
+			padding: 8px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		.status-update-form button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			padding: 8px 15px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.status-update-form button:hover {
+			background-color: #0056b3;
+		}
+
+		.back-link {
+			display: block;
+			margin-top: 30px;
+			text-align: left;
+		}
+
+		.back-link a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		.back-link a:hover {
+			text-decoration: underline;
+		}
+
+		.message {
+			background-color: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		.error-message {
+			background-color: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<h1>My Café Online - 管理者</h1>
+	</div>
+	<div class="nav"> <a th:href="@{/}">顧客サイトトップ</a> <a th:href="@{/admin/products}">商品管理</a> <a
+			th:href="@{/admin/orders}">注文管理</a> </div>
+	<div class="container">
+		<h2 th:if="${order != null}">注文詳細 (ID: <span th:text="${order.id}"></span>)</h2>
+		<p th:if="${message}" class="message" th:text="${message}"></p>
+		<p th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></p>
+		<div th:if="${order != null}">
+			<p><span class="label">顧客名:</span> <span th:text="${order.customer.name}"></span></p>
+			<p><span class="label">E メール:</span> <span th:text="${order.customer.email}"></span></p>
+			<p><span class="label">注文日時:</span> <span
+					th:text="${#temporals.format(order.orderDate, 'yyyy/MM/dd HH:mm:ss')}"></span></p>
+			<p><span class="label">現在のステータス:</span> <span th:text="${order.status}"></span></p>
+			<h3>注文商品</h3>
+			<table class="item-table">
+				<thead>
+					<tr>
+						<th>商品名</th>
+						<th>単価</th>
+						<th>数量</th>
+						<th>小計</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${order.orderItems}">
+						<td th:text="${item.product.name}"></td>
+						<td th:text="${#numbers.formatCurrency(item.priceAtOrder)} + '円'"></td>
+						<td th:text="${item.quantity}"></td>
+						<td th:text="${#numbers.formatCurrency(item.priceAtOrder * item.quantity)} + '円'"></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="total-info">
+				合計金額: <span th:text="${#numbers.formatCurrency(order.totalAmount)} + '円'"></span>
+			</div>
+			<div class="status-update-form">
+				<h3>注文ステータス更新</h3>
+				<form th:action="@{/admin/orders/{id}/updateStatus(id=${order.id})}" method="post">
+					<label for="status">ステータス:</label>
+					<select id="status" name="status">
+						<option value="受付済" th:selected="${order.status == '受付済'}">受付済</option>
+						<option value="準備中" th:selected="${order.status == '準備中'}">準備中</option>
+						<option value="完了" th:selected="${order.status == '完了'}">完了</option>
+						<option value="キャンセル" th:selected="${order.status == 'キャンセル'}">キャンセル</option>
+					</select>
+					<button type="submit">ステータス更新</button>
+				</form>
+			</div>
+		</div>
+		<div th:unless="${order != null}">
+			<p th:text="${errorMessage} ?: '注文情報が見つかりませんでした。'"></p>
+		</div>
+		<div class="back-link">
+			<a th:href="@{/admin/orders}">注文一覧に戻る</a>
+		</div>
+	</div>
+
+</body>
+
+</html>

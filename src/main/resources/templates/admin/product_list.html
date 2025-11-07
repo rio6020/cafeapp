@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>管理者: 商品一覧</title>
+	<style>
+		body {
+			font-family: 'Arial'
+				, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			color: #333;
+		}
+
+		.header {
+			background-color: #6a002c;
+			color: white;
+			padding: 15px 20px;
+			text-align: center;
+		}
+
+		.header h1 {
+			margin: 0;
+		}
+
+		.nav {
+			background-color: #500021;
+			padding: 10px 0;
+			text-align: center;
+		}
+
+		.nav a {
+			color: white;
+			text-decoration: none;
+			padding: 0 15px;
+		}
+
+		.nav a:hover {
+			text-decoration: underline;
+		}
+
+		.container {
+			max-width: 960px;
+			margin: 20px auto;
+			padding: 20px;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		h2 {
+			color: #6a002c;
+			border-bottom: 2px solid #6a002c;
+			padding-bottom: 5px;
+			margin-bottom: 20px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 10px;
+			text-align: left;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		.action-links a {
+			margin-right: 10px;
+			text-decoration: none;
+			color: #007bff;
+		}
+
+		.action-links a.delete {
+			color: #dc3545;
+		}
+
+		.action-links a:hover {
+			text-decoration: underline;
+		}
+
+		.add-new-button {
+			background-color: #28a745;
+			color: white;
+			padding: 10px 15px;
+			border-radius: 5px;
+			text-decoration: none;
+			display: inline-block;
+			margin-top: 20px;
+		}
+
+		.add-new-button:hover {
+			background-color: #218838;
+		}
+
+		.message {
+			background-color: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		.error-message {
+			background-color: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<h1>My Café Online - 管理者</h1>
+	</div>
+	<div class="nav">
+		<a th:href="@{/}">顧客サイトトップ</a>
+		<a th:href="@{/admin/products}">商品管理</a>
+		<a th:href="@{/admin/orders}">注文管理</a>
+	</div>
+	<div class="container">
+		<h2>商品一覧</h2>
+		<p th:if="${message}" class="message" th:text="${message}"></p>
+		<p th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></p>
+		<a th:href="@{/admin/products/new}" class="add-new-button">新規商品登録</a>
+		<table th:if="${!products.isEmpty()}">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>商品名</th>
+					<th>価格</th>
+					<th>カテゴリ</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="product : ${products}">
+					<td th:text="${product.id}"></td>
+					<td th:text="${product.name}"></td>
+					<td th:text="${#numbers.formatCurrency(product.price)} + '円'"></td>
+					<td th:text="${product.category}"></td>
+					<td class="action-links">
+						<a th:href="@{/admin/products/{id}/edit(id=${product.id})}">編集</a>
+						<a th:href="@{/admin/products/{id}/delete(id=${product.id})}"
+							onclick="return confirm('本当に削除しますか？');" class="delete">削除</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div th:if="${products.isEmpty()}">
+			<p>登録されている商品はありません。</p>
+		</div>
+	</div>
+
+</body>
+
+</html>

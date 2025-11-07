@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="${product.id == null ? '管理者: 新規商品登録' : '管理者: 商品編集'}"></title>
+	<style>
+		body {
+			font-family: 'Arial'
+				, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			color: #333;
+		}
+
+		.header {
+			background-color: #6a002c;
+			color: white;
+			padding: 15px 20px;
+			text-align: center;
+		}
+
+		.header h1 {
+			margin: 0;
+		}
+
+		.nav {
+			background-color: #500021;
+			padding: 10px 0;
+			text-align: center;
+		}
+
+		.nav a {
+			color: white;
+			text-decoration: none;
+			padding: 0 15px;
+		}
+
+		.nav a:hover {
+			text-decoration: underline;
+		}
+
+		.container {
+			max-width: 600px;
+			margin: 20px auto;
+			padding: 20px;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		h2 {
+			color: #6a002c;
+			border-bottom: 2px solid #6a002c;
+			padding-bottom: 5px;
+			margin-bottom: 20px;
+		}
+
+		form label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+
+		form input[type="text"],
+		form input[type="number"],
+		form textarea,
+		form select {
+			width: calc(100% - 22px);
+			padding: 10px;
+			margin-bottom: 15px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+		}
+
+		form textarea {
+			resize: vertical;
+			min-height: 80px;
+		}
+
+		form button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 16px;
+		}
+
+		form button:hover {
+			background-color: #0056b3;
+		}
+
+		.back-link {
+			display: block;
+			margin-top: 20px;
+			text-align: left;
+		}
+
+		.back-link a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		.back-link a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<h1>My Café Online - 管理者</h1>
+	</div>
+	<div class="nav"> <a th:href="@{/}">顧客サイトトップ</a>
+		<a th:href="@{/admin/products}">商品管理</a>
+		<a th:href="@{ /admin/orders}">注文管理</a>
+	</div>
+	<div class="container">
+		<h2 th:text="${product.id == null ? '新規商品登録' : '商品編集'}"></h2>
+		<form th:action="@{/admin/products/save}" th:object="${product}" method="post">
+			<input type="hidden" th:field="*{id}" />
+			<p>
+				<label for="name">商品名:</label>
+				<input type="text" id="name" th:field="*{name}" required>
+			</p>
+			<p>
+				<label for="price">価格:</label>
+				<input type="number" id="price" th:field="*{price}" step="0.01" min="0" required>
+			</p>
+			<p>
+				<label for="description">説明:</label>
+				<textarea id="description" th:field="*{description}"></textarea>
+			</p>
+			<p>
+				<label for="category">カテゴリ:</label>
+				<select id="category" th:field="*{category}" required>
+					<option value="">選択してください</option>
+					<option value="ドリンク">ドリンク</option>
+					<option value="フード">フード</option>
+				</select>
+			</p>
+			<p>
+				<button type="submit">保存</button>
+			</p>
+		</form>
+		<div class="back-link">
+			<a th:href="@{/admin/products}">商品一覧に戻る</a>
+		</div>
+	</div>
+
+</body>
+
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>注文完了</title>
+	<style>
+		body {
+			font-family: 'Arial'
+				, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			color: #333;
+		}
+
+		.header {
+			background-color: #6a002c;
+			color: white;
+			padding: 15px 20px;
+			text-align: center;
+		}
+
+		.header h1 {
+			margin: 0;
+		}
+
+		.nav {
+			background-color: #500021;
+			padding: 10px 0;
+			text-align: center;
+		}
+
+		.nav a {
+			color: white;
+			text-decoration: none;
+			padding: 0 15px;
+		}
+
+		.nav a:hover {
+			text-decoration: underline;
+		}
+
+		.container {
+			max-width: 600px;
+			margin: 50px auto;
+			padding: 30px;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			text-align: center;
+		}
+
+		h2 {
+			color: #28a745;
+			margin-bottom: 20px;
+		}
+
+		p {
+			margin-bottom: 15px;
+		}
+
+		.button-group a {
+			background-color: #007bff;
+			color: white;
+			padding: 10px 20px;
+			border-radius: 5px;
+			text-decoration: none;
+			margin: 0 10px;
+		}
+
+		.button-group a:hover {
+			background-color: #0056b3;
+		}
+
+		.message {
+			background-color: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 20px;
+		}
+
+		.error-message {
+			background-color: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<h1>My Café Online</h1>
+	</div>
+	<div class="nav"> <a th:href="@{/}">トップ</a> <a th:href="@{/cart}">カート</a> <a th:href="@{/admin/products}">管理者向け
+			(商品)</a> <a th:href="@{/admin/orders}">管理者向け (注文)</a> </div>
+	<div class="container">
+		<h2>ご注文ありがとうございます！</h2>
+		<p th:if="${message}" class="message" th:text="${message}"></p>
+		<p>またのご利用をお待ちしております。</p>
+		<div class="button-group">
+			<a th:href="@{/}">トップページに戻る</a>
+		</div>
+	</div>
+
+</body>
+
+</html>
